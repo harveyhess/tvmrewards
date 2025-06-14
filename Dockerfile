@@ -19,4 +19,4 @@ RUN chmod +x ./start.sh
 
 # Set working directory and start script
 WORKDIR /var/www/html
-CMD ["/start.sh"]
+CMD ["./start.sh"]
