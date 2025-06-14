@@ -7,7 +7,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 RUN a2enmod rewrite
 
 # Copy your PHP app to Apache's public directory
-COPY /var/www/html
+COPY . /var/www/html
 COPY ./includes /var/www/html/includes
 COPY ./start.sh /start.sh
 
