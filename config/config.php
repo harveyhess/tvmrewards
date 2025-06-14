@@ -1,19 +1,19 @@
 <?php
 // Database configuration
-define('DB_HOST', '127.0.0.1');
+define('DB_HOST', 'mysql.railway.internal');
 define('DB_USER', 'root');
-define('DB_PASS', '');
-define('DB_NAME', 'Veteran');
+define('DB_PASS', 'iyHmlSOlnPjrIZBJRyjrqwqSDAzmYUwX');
+define('DB_NAME', 'railway');
 
 // Application configuration
 define('SITE_NAME', 'Patient Loyalty Rewards System');
-define('SITE_URL', 'http://localhost/Veteran');
+define('SITE_URL', 'mysql://root:iyHmlSOlnPjrIZBJRyjrqwqSDAzmYUwX@mysql.railway.internal:3306/railway');
 define('UPLOAD_DIR', __DIR__ . '/../uploads');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_FILE_TYPES', ['csv']);
 
 // Server configuration
-define('PORT', 2500); // Development server port
+define('PORT', 3306); // Development server port
 
 // Session configuration
 define('SESSION_NAME', 'patient_loyalty_session');
