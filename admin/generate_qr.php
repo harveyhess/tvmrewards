@@ -12,14 +12,14 @@ if (!isset($_SESSION['user_id']) || !isset($_SESSION['is_admin'])) {
     exit;
 }
 
-if (!isset($_GET['UHID'])) {
+if (!isset($_GET['PatientID'])) {
     header('Content-Type: application/json');
     echo json_encode(['error' => 'Patient ID is required']);
     exit;
 }
 
 $controller = new AdminController();
-$qrData = $controller->generateQrCode($_GET['UHID']);
+$qrData = $controller->generateQrCode($_GET['PatientID']);
 
 if ($qrData) {
     // Create the login URL with encoded data - using relative path
@@ -38,7 +38,7 @@ if ($qrData) {
     echo json_encode([
         'url' => $loginUrl,
         'qr_code_url' => $qrCodeUrl,
-        'UHID' => $qrData['UHID'],
+        'PatientID' => $qrData['PatientID'],
         'name' => $qrData['name'],
         'phone' => $qrData['phone']
     ]);

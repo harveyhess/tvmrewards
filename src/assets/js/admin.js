@@ -182,7 +182,7 @@ document.addEventListener('DOMContentLoaded', function() {
             qrCode.innerHTML = '<p>Generating QR code...</p>';
             qrModal.style.display = 'block';
             
-            fetch(`../../admin/generate_qr.php?UHID=${patientId}`)
+            fetch(`../../admin/generate_qr.php?PatientID=${patientId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.qr_code_url) {
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                      style="max-width: 300px; margin: 20px auto;"
                                      onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=${encodeURIComponent(data.url)}'">
                                 <div class="qr-info">
-                                    <p><strong>Patient ID:</strong> ${data.UHID}</p>
+                                    <p><strong>Patient ID:</strong> ${data.PatientID}</p>
                                     <p><strong>Name:</strong> ${data.name}</p>
                                     <p><strong>Phone:</strong> ${data.phone}</p>
                                     <p><strong>Login URL:</strong></p>
@@ -228,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 if (data.success) {
                     // Update points in the table
-                    const pointsElement = document.querySelector(`[data-patient-id="${formData.get('UHID')}"]`)
+                    const pointsElement = document.querySelector(`[data-patient-id="${formData.get('PatientID')}"]`)
                         .parentElement.querySelector('.points');
                     pointsElement.textContent = formData.get('points');
                     

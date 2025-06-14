@@ -38,7 +38,7 @@ class PatientController extends BaseController {
         );
 
         $transactions = $this->db->fetchAll(
-            "SELECT * FROM transactions WHERE UHID = ? ORDER BY transaction_date DESC LIMIT 10",
+            "SELECT * FROM transactions WHERE PatientID = ? ORDER BY transaction_date DESC LIMIT 10",
             [$patientId]
         );
 
@@ -55,7 +55,7 @@ class PatientController extends BaseController {
 
         $identifier = $this->sanitizeInput($_POST['identifier']);
         $patient = $this->db->fetch(
-            "SELECT * FROM patients WHERE UHID = ? OR phone_number = ?",
+            "SELECT * FROM patients WHERE PatientID = ? OR phone_number = ?",
             [$identifier, $identifier]
         );
 
@@ -89,12 +89,12 @@ class PatientController extends BaseController {
         $offset = ($page - 1) * $limit;
 
         $transactions = $this->db->fetchAll(
-            "SELECT * FROM transactions WHERE UHID = ? ORDER BY transaction_date DESC LIMIT ? OFFSET ?",
+            "SELECT * FROM transactions WHERE PatientID = ? ORDER BY transaction_date DESC LIMIT ? OFFSET ?",
             [$_SESSION['user_id'], $limit, $offset]
         );
 
         $total = $this->db->fetch(
-            "SELECT COUNT(*) as count FROM transactions WHERE UHID = ?",
+            "SELECT COUNT(*) as count FROM transactions WHERE PatientID = ?",
             [$_SESSION['user_id']]
         )['count'];
 
@@ -121,13 +121,13 @@ class PatientController extends BaseController {
         return $this->db->fetchAll(
             "SELECT t.* 
             FROM (
-                SELECT id, UHID, transaction_date, amount_paid, points_earned,
+                SELECT id, PatientID, transaction_date, amount_paid, points_earned,
                        ROW_NUMBER() OVER (
                            PARTITION BY DATE(transaction_date), amount_paid, points_earned 
                            ORDER BY id DESC
                        ) as rn
                 FROM transactions 
-                WHERE UHID = ?
+                WHERE PatientID = ?
             ) t 
             WHERE t.rn = 1
             ORDER BY t.transaction_date DESC, t.id DESC 
@@ -142,13 +142,13 @@ class PatientController extends BaseController {
         $transactions = $this->db->fetchAll(
             "SELECT t.* 
             FROM (
-                SELECT id, UHID, transaction_date, amount_paid, points_earned,
+                SELECT id, PatientID, transaction_date, amount_paid, points_earned,
                        ROW_NUMBER() OVER (
                            PARTITION BY DATE(transaction_date), amount_paid, points_earned 
                            ORDER BY id DESC
                        ) as rn
                 FROM transactions 
-                WHERE UHID = ?
+                WHERE PatientID = ?
             ) t 
             WHERE t.rn = 1
             ORDER BY t.transaction_date DESC, t.id DESC 
@@ -167,7 +167,7 @@ class PatientController extends BaseController {
                                ORDER BY id DESC
                            ) as rn
                     FROM transactions 
-                    WHERE UHID = ?
+                    WHERE PatientID = ?
                 ) t 
                 WHERE t.rn = 1
             ) as unique_transactions",
@@ -235,7 +235,7 @@ class PatientController extends BaseController {
 
         // Insert login log with patient details
         $result = $this->db->insert('login_logs', [
-            'UHID' => $patientId,
+            'PatientID' => $patientId,
             'patient_name' => $patient['name'],
             'phone_number' => $patient['phone_number'],
             'login_method' => $method,
@@ -268,7 +268,7 @@ class PatientController extends BaseController {
                 // Clean and validate data
                 $name = trim($row['name'] ?? '');
                 $phone = trim($row['phone_number'] ?? '');
-                $patientId = trim($row['UHID'] ?? '');
+                $patientId = trim($row['PatientID'] ?? '');
 
                 if (empty($name) || empty($phone) || empty($patientId)) {
                     $errors[] = "Missing required data for row: " . json_encode($row);
@@ -277,7 +277,7 @@ class PatientController extends BaseController {
 
                 // Check if patient exists
                 $existingPatient = $this->db->fetch(
-                    "SELECT * FROM patients WHERE UHID = ? OR (name = ? AND phone_number = ?)",
+                    "SELECT * FROM patients WHERE PatientID = ? OR (name = ? AND phone_number = ?)",
                     [$patientId, $name, $phone]
                 );
 
@@ -296,7 +296,7 @@ class PatientController extends BaseController {
                 } else {
                     // Insert new patient
                     $this->db->insert('patients', [
-                        'UHID' => $patientId,
+                        'PatientID' => $patientId,
                         'name' => $name,
                         'phone_number' => $phone,
                         'total_points' => 0
@@ -326,7 +326,7 @@ class PatientController extends BaseController {
             "SELECT r.*, rw.name as reward_name 
             FROM redemptions r 
             JOIN rewards rw ON r.reward_id = rw.id 
-            WHERE r.UHID = ? 
+            WHERE r.PatientID = ? 
             ORDER BY r.created_at DESC 
             LIMIT 10",
             [$patientId]
@@ -364,7 +364,7 @@ class PatientController extends BaseController {
 
             // Create redemption record
             $redemptionId = $this->db->insert('redemptions', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'reward_id' => $rewardId,
                 'points_spent' => $reward['points_cost'],
                 'status' => 'pending'
@@ -378,7 +378,7 @@ class PatientController extends BaseController {
 
             // Add to points ledger
             $this->db->insert('points_ledger', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'points' => -$reward['points_cost'],
                 'type' => 'redeem',
                 'reference_id' => $redemptionId,

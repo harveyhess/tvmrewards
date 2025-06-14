@@ -40,7 +40,7 @@
                         <tbody>
                             <?php foreach ($patients as $patient): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($patient['UHID']); ?></td>
+                                    <td><?php echo htmlspecialchars($patient['PatientID']); ?></td>
                                     <td><?php echo htmlspecialchars($patient['name']); ?></td>
                                     <td><?php echo htmlspecialchars($patient['phone_number']); ?></td>
                                     <td>
@@ -73,7 +73,7 @@
                 <div class="modal-content">
                     <h2>Edit Points</h2>
                     <form id="pointsForm">
-                        <input type="hidden" id="patientId" name="UHID">
+                        <input type="hidden" id="patientId" name="PatientID">
                         <div class="form-group">
                             <label for="points">Points:</label>
                             <input type="number" id="points" name="points" required min="0">

@@ -87,7 +87,7 @@ class AdminController extends BaseController {
 
                 // Insert or update patient
                 $patient = $this->db->fetch(
-                    "SELECT id FROM patients WHERE UHID = ?",
+                    "SELECT id FROM patients WHERE PatientID = ?",
                     [$patientId]
                 );
 
@@ -97,7 +97,7 @@ class AdminController extends BaseController {
                 } else {
                     error_log("Creating new patient: " . $patientId);
                     $this->db->execute(
-                        "INSERT INTO patients (UHID, name, phone_number) VALUES (?, ?, ?)",
+                        "INSERT INTO patients (PatientID, name, phone_number) VALUES (?, ?, ?)",
                         [$patientId, $name, $phone]
                     );
                     $patientId = $this->db->lastInsertId();
@@ -154,7 +154,7 @@ class AdminController extends BaseController {
             return $this->jsonResponse(['error' => 'Invalid request method'], 400);
         }
 
-        $patientId = $this->sanitizeInput($_POST['UHID']);
+        $patientId = $this->sanitizeInput($_POST['PatientID']);
         $points = (int)$_POST['points'];
 
         try {
@@ -187,7 +187,7 @@ class AdminController extends BaseController {
 
     public function exportPatients() {
         $patients = $this->db->fetchAll(
-            "SELECT UHID, name, phone_number, total_points FROM patients ORDER BY name"
+            "SELECT PatientID, name, phone_number, total_points FROM patients ORDER BY name"
         );
 
         header('Content-Type: text/csv');
@@ -230,7 +230,7 @@ class AdminController extends BaseController {
         // Return both token and patient info
         return [
             'token' => $patient['qr_token'],
-            'UHID' => $patient['UHID'],
+            'PatientID' => $patient['PatientID'],
             'name' => $patient['name'],
             'phone' => $patient['phone_number'],
             'login_data' => base64_encode(json_encode($loginData))
@@ -265,7 +265,7 @@ class AdminController extends BaseController {
     private function updatePointsFromTransactions() {
         $transactions = $this->db->fetchAll("SELECT * FROM transactions");
         foreach ($transactions as $transaction) {
-            $this->updatePoints($transaction['UHID'], $transaction['points_earned']);
+            $this->updatePoints($transaction['PatientID'], $transaction['points_earned']);
         }
     }
 
@@ -301,14 +301,14 @@ class AdminController extends BaseController {
             // If points are being added, create a transaction record and points ledger entry
         if ($points > 0) {
                 $transactionId = $this->db->insert('transactions', [
-                    'UHID' => $patientId,
+                    'PatientID' => $patientId,
                     'amount_paid' => $points * 100, // Assuming 1 point per 100 KES
                     'points_earned' => $points
                 ]);
 
                 // Add to points ledger
                 $this->db->insert('points_ledger', [
-                    'UHID' => $patientId,
+                    'PatientID' => $patientId,
                     'points' => $points,
                     'type' => 'earn',
                     'reference_id' => $transactionId,
@@ -347,7 +347,7 @@ class AdminController extends BaseController {
 
     public function getPointsLedger($patientId) {
         return $this->db->fetchAll(
-            "SELECT * FROM points_ledger WHERE UHID = ? ORDER BY created_at DESC",
+            "SELECT * FROM points_ledger WHERE PatientID = ? ORDER BY created_at DESC",
             [$patientId]
         );
     }

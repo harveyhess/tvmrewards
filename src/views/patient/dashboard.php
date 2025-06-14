@@ -21,7 +21,7 @@
             <section class="patient-info">
                 <div class="info-card">
                     <h3>Patient Information</h3>
-                    <p><strong>Patient ID:</strong> <?php echo htmlspecialchars($patient['UHID']); ?></p>
+                    <p><strong>Patient ID:</strong> <?php echo htmlspecialchars($patient['PatientID']); ?></p>
                     <p><strong>Phone Number:</strong> <?php echo htmlspecialchars($patient['phone_number']); ?></p>
                     <p><strong>Total Points:</strong> <span class="points"><?php echo $patient['total_points']; ?></span></p>
                 </div>

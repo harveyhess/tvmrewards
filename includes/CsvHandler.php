@@ -94,14 +94,14 @@ class CsvHandler {
 
             // Check if patient exists
             $patient = $this->db->fetch(
-                "SELECT id FROM patients WHERE UHID = ?",
+                "SELECT id FROM patients WHERE PatientID = ?",
                 [$data['patientid']]
             );
 
             if (!$patient) {
                 // Create new patient
                 $patientId = $this->db->insert('patients', [
-                    'UHID' => $data['patientid'],
+                    'PatientID' => $data['patientid'],
                     'name' => $data['name'],
                     'phone_number' => $data['phonenumber'],
                     'total_points' => $points,
@@ -120,7 +120,7 @@ class CsvHandler {
 
             // Record transaction
             $this->db->insert('transactions', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'amount_paid' => $data['amountpaid'],
                 'points_earned' => $points
             ]);

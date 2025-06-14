@@ -31,7 +31,7 @@ try {
         
         "CREATE TABLE IF NOT EXISTS patients (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID VARCHAR(50) UNIQUE NOT NULL, /*UHID CHANGED ,Amount,DATE,ReffNo(transaction id)*/
+            PatientID VARCHAR(50) UNIQUE NOT NULL, /*PatientID CHANGED ,Amount,DATE,ReffNo(transaction id)*/
 
 
             name VARCHAR(100) NOT NULL,/*PName*/
@@ -46,11 +46,11 @@ try {
         
         "CREATE TABLE IF NOT EXISTS transactions (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID INT NOT NULL,
+            PatientID INT NOT NULL,
             amount_paid DECIMAL(10,2) NOT NULL,
             points_earned INT NOT NULL,
             transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (UHID) REFERENCES patients(id)
+            FOREIGN KEY (PatientID) REFERENCES patients(id)
         )",
         
         "CREATE TABLE IF NOT EXISTS points_settings (
@@ -63,12 +63,12 @@ try {
 
         "CREATE TABLE IF NOT EXISTS login_logs (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID INT NOT NULL,
+            PatientID INT NOT NULL,
             patient_name VARCHAR(100) NOT NULL,
             phone_number VARCHAR(20) NOT NULL,
             login_method ENUM('regular', 'qr_code') NOT NULL DEFAULT 'regular',
             login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (UHID) REFERENCES patients(id)
+            FOREIGN KEY (PatientID) REFERENCES patients(id)
         )",
 
         "CREATE TABLE IF NOT EXISTS rewards (
@@ -83,25 +83,25 @@ try {
 
         "CREATE TABLE IF NOT EXISTS points_ledger (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID INT NOT NULL,
+            PatientID INT NOT NULL,
             points INT NOT NULL,
             type ENUM('earn', 'redeem') NOT NULL,
             reference_id INT,
             reference_type ENUM('transaction', 'redemption') NOT NULL,
             description TEXT,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (UHID) REFERENCES patients(id)
+            FOREIGN KEY (PatientID) REFERENCES patients(id)
         )",
 
         "CREATE TABLE IF NOT EXISTS redemptions (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID INT NOT NULL,
+            PatientID INT NOT NULL,
             reward_id INT NOT NULL,
             points_spent INT NOT NULL,
             status ENUM('pending', 'completed', 'cancelled') DEFAULT 'pending',
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             completed_at TIMESTAMP NULL,
-            FOREIGN KEY (UHID) REFERENCES patients(id),
+            FOREIGN KEY (PatientID) REFERENCES patients(id),
             FOREIGN KEY (reward_id) REFERENCES rewards(id)
         )",
 
@@ -118,12 +118,12 @@ try {
 
         "CREATE TABLE IF NOT EXISTS tier_downgrade_tracking (
             id INT AUTO_INCREMENT PRIMARY KEY,
-            UHID INT NOT NULL,
+            PatientID INT NOT NULL,
             current_tier_id INT NOT NULL,
             downgrade_reason ENUM('inactivity', 'redemption_limit') NOT NULL,
             downgrade_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             is_pending BOOLEAN DEFAULT TRUE,
-            FOREIGN KEY (UHID) REFERENCES patients(id),
+            FOREIGN KEY (PatientID) REFERENCES patients(id),
             FOREIGN KEY (current_tier_id) REFERENCES tiers(id)
         )",
 

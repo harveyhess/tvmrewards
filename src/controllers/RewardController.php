@@ -85,7 +85,7 @@ class RewardController extends BaseController {
 
             // Create redemption record
             $redemptionId = $this->db->insert('redemptions', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'reward_id' => $rewardId,
                 'points_spent' => $reward['points_cost'],
                 'status' => 'pending'
@@ -99,7 +99,7 @@ class RewardController extends BaseController {
 
             // Add to points ledger
             $this->db->insert('points_ledger', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'points' => -$reward['points_cost'],
                 'type' => 'redeem',
                 'reference_id' => $redemptionId,
@@ -150,7 +150,7 @@ class RewardController extends BaseController {
             // Return points to patient
             $this->db->execute(
                 "UPDATE patients SET total_points = total_points + ? WHERE id = ?",
-                [$redemption['points_spent'], $redemption['UHID']]
+                [$redemption['points_spent'], $redemption['PatientID']]
             );
 
             // Update redemption status
@@ -161,7 +161,7 @@ class RewardController extends BaseController {
 
             // Add to points ledger
             $this->db->insert('points_ledger', [
-                'UHID' => $redemption['UHID'],
+                'PatientID' => $redemption['PatientID'],
                 'points' => $redemption['points_spent'],
                 'type' => 'earn',
                 'reference_id' => $redemptionId,
@@ -171,7 +171,7 @@ class RewardController extends BaseController {
 
             // Update patient's tier
             $tierController = new TierController(false);
-            $tierController->updatePatientTier($redemption['UHID']);
+            $tierController->updatePatientTier($redemption['PatientID']);
 
             $this->db->getConnection()->commit();
             return true;
@@ -187,7 +187,7 @@ class RewardController extends BaseController {
             "SELECT r.*, rw.name as reward_name, rw.description as reward_description 
             FROM redemptions r 
             JOIN rewards rw ON r.reward_id = rw.id 
-            WHERE r.UHID = ? 
+            WHERE r.PatientID = ? 
             ORDER BY r.created_at DESC",
             [$patientId]
         );

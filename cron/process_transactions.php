@@ -101,7 +101,7 @@ class TransactionProcessor {
         
         // Map of required fields to their possible variations
         $fieldMappings = [
-            'patientid' => ['patientid', 'UHID', 'patient id'],
+            'patientid' => ['patientid', 'PatientID', 'patient id'],
             'amountpaid' => ['amountpaid', 'amount_paid', 'amount paid'],
             'transactiondate' => ['dateofvisit', 'date_of_visit', 'date of visit', 'transactiondate', 'transaction_date', 'transaction date']
         ];
@@ -194,14 +194,14 @@ class TransactionProcessor {
 
         // Get patient
         $patient = $this->db->fetch(
-            "SELECT id FROM patients WHERE UHID = ?",
+            "SELECT id FROM patients WHERE PatientID = ?",
             [$patientId]
         );
 
         if (!$patient) {
             // Create new patient if not exists
             $patientId = $this->db->insert('patients', [
-                'UHID' => $patientId,
+                'PatientID' => $patientId,
                 'name' => $data['name'] ?? 'Unknown',
                 'phone_number' => $data['phonenumber'] ?? '',
                 'total_points' => 0,
@@ -219,7 +219,7 @@ class TransactionProcessor {
         try {
             // Record transaction
             $transactionId = $this->db->insert('transactions', [
-                'UHID' => $patient['id'],
+                'PatientID' => $patient['id'],
                 'amount_paid' => $amountPaid,
                 'points_earned' => $points,
                 'transaction_date' => $transactionDate
@@ -233,7 +233,7 @@ class TransactionProcessor {
 
             // Add to points ledger
             $this->db->insert('points_ledger', [
-                'UHID' => $patient['id'],
+                'PatientID' => $patient['id'],
                 'points' => $points,
                 'type' => 'earn',
                 'reference_id' => $transactionId,
@@ -251,7 +251,7 @@ class TransactionProcessor {
         }
 
         // Check if transaction has already been processed
-        $stmt = $this->db->getConnection()->prepare('SELECT COUNT(*) FROM transactions WHERE UHID = ? AND transaction_id = ?');
+        $stmt = $this->db->getConnection()->prepare('SELECT COUNT(*) FROM transactions WHERE PatientID = ? AND transaction_id = ?');
         $stmt->execute([$patient['id'], $transactionId]);
         $count = $stmt->fetchColumn();
 
@@ -262,7 +262,7 @@ class TransactionProcessor {
         }
 
         // Aggregate points for the user
-        $stmt = $this->db->getConnection()->prepare('SELECT SUM(points) FROM transactions WHERE UHID = ?');
+        $stmt = $this->db->getConnection()->prepare('SELECT SUM(points) FROM transactions WHERE PatientID = ?');
         $stmt->execute([$patient['id']]);
         $total_points = $stmt->fetchColumn();
 

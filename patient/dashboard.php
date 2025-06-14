@@ -72,7 +72,7 @@ $redemptions = $controller->getPatientRedemptions($_SESSION['user_id']);
                 </div>
                 <div class="points-card">
                     <h3>Patient ID</h3>
-                    <p><?php echo htmlspecialchars($patient['UHID']); ?></p>
+                    <p><?php echo htmlspecialchars($patient['PatientID']); ?></p>
                 </div>
             </section>
 
