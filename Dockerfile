@@ -1,19 +1,19 @@
-FROM php:8.2-apache
+FROM php:8.1-apache
 
-# Enable Apache mod_rewrite
+# Install required PHP extensions
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
+# Enable Apache rewrite module
 RUN a2enmod rewrite
 
-# Copy app files into container
-COPY . /var/www/html/
+# Copy your PHP app to Apache's public directory
+COPY /var/www/html
+COPY ./includes /var/www/html/includes
+COPY ./start.sh /start.sh
 
-# Copy custom php.ini (optional)
-# COPY php.ini /usr/local/etc/php/
+# Make start.sh executable
+RUN chmod +x /start.sh
 
-# Set working directory
-WORKDIR /var/www/html/
-
-# Expose port
-EXPOSE 80
-
-# Start script (if needed)
-CMD ["bash", "./start.sh"]
+# Set working directory and start script
+WORKDIR /var/www/html
+CMD ["/start.sh"]
