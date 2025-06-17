@@ -5,6 +5,7 @@ RUN docker-php-ext-install mysqli pdo pdo_mysql
 
 RUN apt-get update && apt-get install -y lsof
 RUN docker-php-ext-install sockets
+EXPOSE 80
 
 # Enable Apache rewrite module
 RUN a2enmod rewrite
