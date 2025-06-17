@@ -8,7 +8,7 @@ define('DB_NAME', 'railway');
 
 // Application configuration
 define('SITE_NAME', 'Patient Loyalty Rewards System');
-define('SITE_URL', 'mysql://root:iyHmlSOlnPjrIZBJRyjrqwqSDAzmYUwX@mysql.railway.internal:3306/railway');
+define('SITE_URL', 'https://tvmrewards-production.up.railway.app/');
 define('UPLOAD_DIR', __DIR__ . '/../uploads');
 define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
 define('ALLOWED_FILE_TYPES', ['csv']);
