@@ -1,7 +1,7 @@
 <?php
 // Database configuration
 define('DB_HOST', 'shortline.proxy.rlwy.net');
-define('DB_PORT', '11783'); // Add this!
+define('DB_PORT', '3306'); // Add this!
 define('DB_USER', 'root');
 define('DB_PASS', 'iyHmlSOlnPjrIZBJRyjrqwqSDAzmYUwX');
 define('DB_NAME', 'railway');
